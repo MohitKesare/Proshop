@@ -1,13 +1,29 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import products from "../products";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
-import { Row, Col, Image, ListGroup, Card, Button, ListGroupItem } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  ListGroupItem,
+} from "react-bootstrap";
 import Rating from "../components/Rating";
 
 const Productscreen = () => {
+  const [product, setProduct] = useState({});
   const { id: productId } = useParams();
-  const product = products.find((p) => p._id === productId);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const { data } = await axios.get(`/api/products/${productId}`);
+      setProduct(data);
+    };
+    fetchProduct();
+  }, [productId]);
 
   return (
     <>
@@ -30,7 +46,9 @@ const Productscreen = () => {
               />
             </ListGroup.Item>
             <ListGroup.Item>Price : ${product.price}</ListGroup.Item>
-            <ListGroup.Item>Desciprtion : ${product.description}</ListGroup.Item>
+            <ListGroup.Item>
+              Desciprtion : ${product.description}
+            </ListGroup.Item>
           </ListGroup>
         </Col>
         <Col md={3}>
@@ -38,21 +56,31 @@ const Productscreen = () => {
             <ListGroup variant="flush">
               <ListGroup.Item>
                 <Row>
-                    <Col>Price : </Col>
-                    <Col><strong>${product.price }</strong></Col>
+                  <Col>Price : </Col>
+                  <Col>
+                    <strong>${product.price}</strong>
+                  </Col>
                 </Row>
               </ListGroup.Item>
             </ListGroup>
             <ListGroup variant="flush">
               <ListGroup.Item>
                 <Row>
-                    <Col>Status : </Col>
-                    <Col><strong>${product.countInStock>0? 'In Stock' :'Out Of Stock'}</strong></Col>
+                  <Col>Status : </Col>
+                  <Col>
+                    <strong>
+                      ${product.countInStock > 0 ? "In Stock" : "Out Of Stock"}
+                    </strong>
+                  </Col>
                 </Row>
               </ListGroup.Item>
               <ListGroupItem>
-                <Button className="btn-block" disabled={product.countInStock===0} type="button">
-                    Add To Cart
+                <Button
+                  className="btn-block"
+                  disabled={product.countInStock === 0}
+                  type="button"
+                >
+                  Add To Cart
                 </Button>
               </ListGroupItem>
             </ListGroup>
